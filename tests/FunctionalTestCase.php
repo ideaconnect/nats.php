@@ -51,6 +51,19 @@ abstract class FunctionalTestCase extends TestCase
         }
     }
 
+    public function requireMinNatsVersion(string $minVersion): void
+    {
+        $client = $this->getClient();
+        $client->ping();
+        $version = $client->connection->getInfoMessage()->version;
+
+        if (version_compare($version, $minVersion, '<')) {
+            $this->markTestSkipped(
+                "Requires NATS server >= $minVersion (running $version)"
+            );
+        }
+    }
+
     public function tearDown(): void
     {
         $api = $this->getClient()->getApi();

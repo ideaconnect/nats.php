@@ -33,13 +33,19 @@ class Configuration
 
     public function fromArray(array $array): self
     {
-        return $this
+        $this
             ->setDiscardPolicy($array['discard'])
             ->setMaxConsumers($array['max_consumers'])
             ->setReplicas($array['replicas'] ?? $array['num_replicas'])
             ->setRetentionPolicy($array['retention'])
             ->setStorageBackend($array['storage'])
             ->setSubjects($array['subjects']);
+
+        if (isset($array['allow_msg_schedules'])) {
+            $this->setAllowMsgSchedules($array['allow_msg_schedules']);
+        }
+
+        return $this;
     }
 
     public function getAllowRollupHeaders(): bool
@@ -209,11 +215,45 @@ class Configuration
         return $this->consumerLimits;
     }
 
-    public function setAllowMsgSchedules(?bool $allowMsgSchedules): void
+    /**
+     * Enable or disable message scheduling on this stream.
+     *
+     * When set to true, the stream accepts messages with scheduling headers
+     * (Nats-Schedule, Nats-Schedule-Target) that instruct the NATS server to
+     * deliver messages to a target subject at a specified future time.
+     *
+     * Requires NATS Server >= 2.12. Once enabled on a stream, this setting
+     * cannot be disabled.
+     *
+     * Supported schedule formats:
+     *  - Single delayed: "@at <RFC3339 timestamp>" (e.g. "@at 2026-03-01T12:00:00Z")
+     *  - Cron (6-field): "seconds minutes hours day-of-month month day-of-week"
+     *  - Predefined: "@yearly", "@monthly", "@weekly", "@daily", "@hourly"
+     *  - Interval: "@every <duration>" (e.g. "@every 5m")
+     *
+     * @param bool|null $allowMsgSchedules true to enable, false to disable, null to omit from config
+     * @return self
+     *
+     * @see https://docs.nats.io/nats-concepts/jetstream/streams
+     * @see https://github.com/nats-io/nats-architecture-and-design/blob/main/adr/ADR-51.md
+     * @see https://nats.io/blog/nats-server-2.12-release/
+     */
+    public function setAllowMsgSchedules(?bool $allowMsgSchedules): self
     {
         $this->allowMsgSchedules = $allowMsgSchedules;
+        return $this;
     }
 
+    /**
+     * Get whether message scheduling is enabled on this stream.
+     *
+     * Returns true if scheduling is enabled, false if explicitly disabled,
+     * or null if the setting was not provided (server default: disabled).
+     *
+     * @return bool|null
+     *
+     * @see https://github.com/nats-io/nats-architecture-and-design/blob/main/adr/ADR-51.md
+     */
     public function getAllowMsgSchedules(): ?bool
     {
         return $this->allowMsgSchedules;
