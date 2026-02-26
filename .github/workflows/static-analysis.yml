@@ -4,19 +4,9 @@ jobs:
   phan:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-      - uses: shivammathur/setup-php@v2
-        with:
-          php-version: '8.5'
-          extensions: curl, dom, xml, zip, unzip, mbstring
+      - uses: actions/checkout@v2
       - name: Install dependencies
         uses: php-actions/composer@v6
-        with:
-          command: install --prefer-dist --optimize-autoloader
-      - name: PHP Version
-        run: php -v
-      - name: Composer Version
-        run: composer --version
       - name: phan
         uses: php-actions/composer@v6
         with:

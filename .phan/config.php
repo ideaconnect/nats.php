@@ -17,6 +17,9 @@ return [
     'exclude_file_list' => [
         // Contains `case 'NULL';` (semicolon instead of colon), deprecated in PHP 8.x
         'vendor/tysonandre/var_representation_polyfill/src/VarRepresentation/Encoder.php',
+        'vendor/tysonandre/',
+        'vendor/doctrine/',
+        'vendor/friendsofphp/',
     ],
 
     'minimum_severity' => Issue::SEVERITY_LOW,
