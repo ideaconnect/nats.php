@@ -22,6 +22,7 @@ Feel free to contribute or give any feedback.
   - [Publish Subscribe](#publish-subscribe)
   - [Request Response](#request-response)
   - [JetStream Api Usage](#jetstream-api-usage)
+  - [Message Scheduling](#message-scheduling)
   - [Microservices](#microservices)
   - [Key Value Storage](#key-value-storage)
   - [Performance](#performance)
@@ -306,6 +307,61 @@ $payload = new Payload('nekufa@gmail.com', [
 
 $stream->put('mailer.bye', $payload);
 
+```
+
+## Message Scheduling
+
+Requires **NATS Server >= 2.12**. See [ADR-51](https://github.com/nats-io/nats-architecture-and-design/blob/main/adr/ADR-51.md) and the [NATS 2.12 release notes](https://nats.io/blog/nats-server-2.12-release/) for background.
+
+Message scheduling lets you publish a message now and have the server deliver it at a specific time or on a recurring schedule. To use it, create a stream with `allowMsgSchedules` enabled, then publish to any of its subjects with two headers:
+- `Nats-Schedule` — when/how often to deliver (see formats below)
+- `Nats-Schedule-Target` — the subject the scheduled message should be delivered to
+
+**Schedule formats**
+
+| Format | Example | Description |
+| --- | --- | --- |
+| `@at <RFC 3339>` | `@at 2026-06-01T12:00:00Z` | Deliver at a specific UTC time |
+| Cron expression | `0 9 * * 1-5` | Standard cron (e.g. weekdays at 09:00) |
+| `@every <duration>` | `@every 30s` | Repeat every duration (Go syntax: `s`, `m`, `h`) |
+| Predefined | `@hourly`, `@daily`, `@weekly`, `@monthly`, `@yearly` | Named intervals |
+
+Messages delivered by the scheduler carry a `Nats-Scheduler` response header.
+
+```php
+use Basis\Nats\Message\Payload;
+use Basis\Nats\Stream\Configuration as StreamConfiguration;
+
+// 1. Create a stream with scheduling support enabled
+$stream = $client->getApi()->getStream('tasks');
+$stream->getConfiguration()
+    ->setSubjects(['tasks.inbox', 'tasks.scheduled'])
+    ->setAllowMsgSchedules(true);
+$stream->create();
+
+// 2. Publish a message scheduled for 30 seconds from now
+$deliverAt = (new \DateTimeImmutable('+30 seconds'))->format(\DateTimeInterface::RFC3339);
+$stream->put('tasks.inbox', new Payload('hello', [
+    'Nats-Schedule'        => '@at ' . $deliverAt,
+    'Nats-Schedule-Target' => 'tasks.scheduled',
+]));
+
+// 3. Consume scheduled deliveries
+$consumer = $stream->getConsumer('scheduled-worker');
+$consumer->getConfiguration()->setSubjectFilter('tasks.scheduled');
+$consumer->handle(function (Payload $payload) {
+    echo 'Received at ' . date('H:i:s') . ': ' . $payload . PHP_EOL;
+    echo 'Scheduler: ' . $payload->getHeader('Nats-Scheduler') . PHP_EOL;
+});
+```
+
+For a recurring schedule use a cron expression or `@every` instead:
+```php
+// Deliver every 10 minutes
+$stream->put('tasks.inbox', new Payload('ping', [
+    'Nats-Schedule'        => '@every 10m',
+    'Nats-Schedule-Target' => 'tasks.scheduled',
+]));
 ```
 
 ## Microservices
