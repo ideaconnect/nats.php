@@ -6,8 +6,12 @@ RUN apt-get update && apt-get install -y \
     php-dom \
     php-xml \
     php-curl \
+    php-dev \
     curl \
     unzip
+
+RUN pecl install ast
+RUN echo "extension=ast.so" > /etc/php/$(php -r "echo PHP_MAJOR_VERSION.'.'.PHP_MINOR_VERSION;")/cli/conf.d/20_ast.ini
 
 # install composer
 RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
