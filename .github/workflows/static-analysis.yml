@@ -12,4 +12,5 @@ jobs:
       - name: phan
         uses: php-actions/composer@v6
         with:
+          php_extensions: ast curl zip xml dom mbstring
           command: run phan
