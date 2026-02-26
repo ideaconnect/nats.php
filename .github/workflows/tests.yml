@@ -14,9 +14,6 @@ jobs:
         verbose: ['0', '1']
     steps:
       - uses: actions/checkout@v2
-      - uses: shivammathur/setup-php@v2
-        with:
-          php-version: ${{ matrix.php }}
       - uses: php-actions/composer@v6
         # This action does not use the php-version from setup-php, so we need to
         # specify it here as well or do not use it at all and run composer install manually.
@@ -24,6 +21,9 @@ jobs:
         with:
           php_version: ${{ matrix.php }}
           php_extensions: curl, dom, xml, mbstring, json, zip
+      - uses: shivammathur/setup-php@v2
+        with:
+          php-version: ${{ matrix.php }}
       - run: docker compose up -d
         working-directory: docker
         env:
