@@ -10,7 +10,7 @@ jobs:
       fail-fast: false
       matrix:
         nats: ['2.10', '2.11','2.12', 'latest']
-        php: ['8.2', '8.3', '8.4', '8.5']
+        php: ['8.1', '8.2', '8.3', '8.4', '8.5']
         verbose: ['0', '1']
     steps:
       - uses: actions/checkout@v2
@@ -18,6 +18,12 @@ jobs:
         with:
           php-version: ${{ matrix.php }}
       - uses: php-actions/composer@v6
+        # This action does not use the php-version from setup-php, so we need to
+        # specify it here as well or do not use it at all and run composer install manually.
+        # Without this instantiator triggers an error of string const.
+        with:
+          php_version: ${{ matrix.php }}
+          php_extensions: curl, dom, xml, mbstring, json, zip
       - run: docker compose up -d
         working-directory: docker
         env:
