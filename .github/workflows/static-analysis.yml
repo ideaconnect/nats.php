@@ -6,7 +6,7 @@ jobs:
     steps:
       - name: display PHP version
         run: php -v
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v2
       - name: Install dependencies
         uses: php-actions/composer@v6
       - name: phan
