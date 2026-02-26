@@ -8,7 +8,7 @@ return [
 
     'directory_list' => [
         'src',
-        'vendor/'
+        'vendor',
     ],
 
     'exclude_analysis_directory_list' => [
