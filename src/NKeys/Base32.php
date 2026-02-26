@@ -189,8 +189,13 @@ class Base32
             $binaryString .= $this->decodeEightBits($bitCount, $eightBits);
         }
 
-        // Converting a binary (\0 terminated) string to a PHP string
-        return rtrim($binaryString, "\0");
+        // Truncate to the exact expected byte length derived from the Base32
+        // input length (N chars × 5 bits / 8 bits-per-byte, integer division).
+        // Using rtrim("\0") would silently drop meaningful trailing null bytes
+        // when the last decoded byte happens to be 0x00.
+        $expectedBytes = intdiv(count($input) * 5, 8);
+
+        return substr($binaryString, 0, $expectedBytes);
     }
 
     /**

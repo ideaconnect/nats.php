@@ -1,0 +1,26 @@
+FROM ubuntu:latest
+
+# install php, sodium, composer
+RUN apt-get update && apt-get install -y \
+    php-cli \
+    php-dom \
+    php-xml \
+    curl \
+    unzip
+
+# install composer
+RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
+
+# set working directory
+WORKDIR /app
+
+# Copy root folder to container
+COPY . /app
+
+# Install any needed packages specified in composer.json
+RUN rm composer.lock
+RUN composer install
+
+# Run composer phan
+CMD ["composer", "phan"]
+
