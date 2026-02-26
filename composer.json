@@ -32,7 +32,7 @@
         "perf-test": "phpunit --testsuite Performance",
         "cs-fix": "php-cs-fixer fix --config .php-cs-fixer.php",
         "cs-verify": "php-cs-fixer fix --config .php-cs-fixer.php --dry-run --diff",
-        "phan": "phan"
+        "phan": "phan --allow-polyfill-parser"
     },
     "authors": [
         {

@@ -12,7 +12,7 @@ jobs:
       - uses: shivammathur/setup-php@v2
         with:
           php-version: ${{ matrix.php }}
-          extensions: curl, dom, xml, mbstring, json, zip, ast
+          extensions: curl, dom, xml, mbstring, json, zip
       - name: Install dependencies
         uses: php-actions/composer@v6
       - name: phan
