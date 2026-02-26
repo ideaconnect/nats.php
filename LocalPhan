@@ -5,6 +5,7 @@ RUN apt-get update && apt-get install -y \
     php-cli \
     php-dom \
     php-xml \
+    php-curl \
     curl \
     unzip
 
@@ -19,6 +20,8 @@ COPY . /app
 
 # Install any needed packages specified in composer.json
 RUN rm composer.lock
+RUN rm -rf vendor/
+RUN php -v
 RUN composer install
 
 # Run composer phan

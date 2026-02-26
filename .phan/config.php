@@ -8,12 +8,9 @@ return [
 
     'directory_list' => [
         'src',
+        'vendor/'
     ],
 
-    // This library has no runtime composer dependencies (only require-dev),
-    // so vendor/ does not need to be parsed for type resolution.
-    // Parsing vendor/ caused crashes on php-cs-fixer / phan's own polyfill files
-    // depending on the PHP version used in CI.
     'exclude_analysis_directory_list' => [
         'vendor/'
     ],
