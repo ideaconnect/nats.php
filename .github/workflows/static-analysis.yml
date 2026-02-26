@@ -3,16 +3,8 @@ on: [push, pull_request]
 jobs:
   phan:
     runs-on: ubuntu-latest
-    strategy:
-      fail-fast: false
-      matrix:
-        php: ['8.1']
     steps:
       - uses: actions/checkout@v2
-      - uses: shivammathur/setup-php@v2
-        with:
-          php-version: ${{ matrix.php }}
-          extensions: curl, dom, xml, mbstring, json, zip
       - name: Install dependencies
         uses: php-actions/composer@v6
       - name: phan
