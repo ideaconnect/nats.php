@@ -8,11 +8,11 @@ jobs:
       - name: Install dependencies
         uses: php-actions/composer@v6
         with:
-          php_version: 8.1
+          php_version: 8.4
           php_extensions: ast curl zip xml dom mbstring
       - name: phan
         uses: php-actions/composer@v6
         with:
-          php_version: 8.1
+          php_version: 8.4
           php_extensions: ast curl zip xml dom mbstring
           command: run phan
