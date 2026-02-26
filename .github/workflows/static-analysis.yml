@@ -8,11 +8,13 @@ jobs:
       - name: Install dependencies
         uses: php-actions/composer@v6
         with:
-          php_version: 8.4
-          php_extensions: ast curl zip xml dom mbstring
+          php_version: 8.4 # Using 8.4 due to error:
+          # /app/vendor/tysonandre/var_representation_polyfill/src/VarRepresentation/Encoder.php:157 [8192]
+          # Case statements followed by a semicolon (;) are deprecated, use a colon (:) instead
       - name: phan
         uses: php-actions/composer@v6
         with:
-          php_version: 8.4
-          php_extensions: ast curl zip xml dom mbstring
+          php_version: 8.4 # Using 8.4 due to error:
+          # /app/vendor/tysonandre/var_representation_polyfill/src/VarRepresentation/Encoder.php:157 [8192]
+          # Case statements followed by a semicolon (;) are deprecated, use a colon (:) instead
           command: run phan
