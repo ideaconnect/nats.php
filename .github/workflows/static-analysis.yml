@@ -6,7 +6,9 @@ jobs:
     steps:
       - name: display PHP version
         run: php -v
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v4
+      - name: Set git safe directory
+        run: git config --global --add safe.directory '*'
       - name: Install dependencies
         uses: php-actions/composer@v6
       - name: phan
