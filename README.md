@@ -5,6 +5,12 @@
 [![Latest Version](https://img.shields.io/github/release/basis-company/nats.php.svg)](https://github.com/basis-company/nats.php/releases)
 [![Total Downloads](https://img.shields.io/packagist/dt/basis-company/nats.svg)](https://packagist.org/packages/basis-company/nats)
 
+# IMPORTANT
+
+This is a shim fork of the *[nats.php](https://github.com/basis-company/nats.php)* by *basis-company*.
+Its sole purpose is to provide stable updates with newer functionalities required for the [symfony-nats-messenger](https://github.com/ideaconnect/symfony-nats-messenger/).
+
+---
 
 Feel free to contribute or give any feedback.
 
