@@ -2,8 +2,13 @@
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![CI](https://github.com/idct/nats-jetstream-php-client/actions/workflows/ci.yml/badge.svg)](https://github.com/idct/nats-jetstream-php-client/actions/workflows/ci.yml)
+[![Coverage](https://img.shields.io/codecov/c/github/idct/nats-jetstream-php-client)](https://codecov.io/gh/idct/nats-jetstream-php-client)
+[![Coverage: ≥90%](https://img.shields.io/badge/coverage-%E2%89%A590%25-brightgreen)](https://codecov.io/gh/idct/nats-jetstream-php-client)
+[![PHP](https://img.shields.io/badge/PHP-8.2%20%7C%208.3%20%7C%208.4%20%7C%208.5-777BB4?logo=php&logoColor=white)](https://www.php.net/)
 [![Latest Version](https://img.shields.io/github/release/idct/nats-jetstream-php-client.svg)](https://github.com/idct/nats-jetstream-php-client/releases)
 [![Total Downloads](https://img.shields.io/packagist/dt/idct/nats-jetstream-php-client.svg)](https://packagist.org/packages/idct/nats-jetstream-php-client)
+[![Sponsor](https://img.shields.io/badge/Sponsor-%E2%9D%A4-ea4aaa?logo=github-sponsors&logoColor=white)](https://github.com/sponsors/ideaconnect)
+[![Buy Me a Coffee](https://img.shields.io/badge/Buy%20me%20a%20coffee-%E2%98%95-FFDD00?logo=buy-me-a-coffee&logoColor=black)](https://buymeacoffee.com/idct)
 
 A PHP client for [NATS](https://nats.io/) with full JetStream, Key-Value, and Microservices support. Targets **NATS 2.12+**.
 

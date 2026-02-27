@@ -70,6 +70,15 @@ jobs:
           command: test
       - name: Coverage text report
         run: cat coverage/report.txt
+      - name: Check coverage threshold (>= 90%)
+        run: |
+          COVERAGE=$(grep "Lines:" coverage/report.txt | head -1 | grep -oP '\d+\.\d+(?=%)' | head -1)
+          echo "Lines coverage: ${COVERAGE}%"
+          if (( $(echo "$COVERAGE < 90" | bc -l) )); then
+            echo "Coverage ${COVERAGE}% is below the required 90%"
+            exit 1
+          fi
+          echo "Coverage check passed: ${COVERAGE}%"
       - name: Upload coverage to Codecov
         if: matrix.php == '8.5' && matrix.verbose == '1'
         uses: codecov/codecov-action@v5
