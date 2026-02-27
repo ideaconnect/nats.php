@@ -68,7 +68,6 @@ class ClientTest extends FunctionalTestCase
         $this->assertCount(1, $client->getSubscriptions());
 
         $property = new ReflectionProperty(Connection::class, 'socket');
-        $property->setAccessible(true);
         $spy->records = [];
         fclose($property->getValue($client->connection));
 
@@ -81,7 +80,6 @@ class ClientTest extends FunctionalTestCase
     public function testPacketSizeSetter()
     {
         $property = new ReflectionProperty(Connection::class, 'packetSize');
-        $property->setAccessible(true);
 
         $client = $this->getClient();
         $client->connection->setPacketSize(512);
@@ -169,7 +167,6 @@ class ClientTest extends FunctionalTestCase
         $connection->close();
 
         $property = new ReflectionProperty(Connection::class, 'socket');
-        $property->setAccessible(true);
 
         // Assert that the socket is closed and set to null
         self::assertNull($property->getValue($connection));

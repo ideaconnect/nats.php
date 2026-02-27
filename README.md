@@ -7,8 +7,17 @@
 
 # IMPORTANT
 
-This is a shim fork of the *[nats.php](https://github.com/basis-company/nats.php)* by *basis-company*.
-Its sole purpose is to provide stable updates with newer functionalities required for the [symfony-nats-messenger](https://github.com/ideaconnect/symfony-nats-messenger/).
+This was created as a shim fork of the *[nats.php](https://github.com/basis-company/nats.php)* by *basis-company*, created
+in February 2026.
+
+Its purpose was to provide stable updates with newer functionalities required for the [symfony-nats-messenger](https://github.com/ideaconnect/symfony-nats-messenger/).
+
+Hopefully development of the original library can get on track at some point, yet I cannot guarantee that some of the
+features merged from the Pull Requests lists of the forked library won't cause any backwards-compatibility breaks.
+
+Library keeps original namespaces, yet further development may diverge.
+
+**Use with caution.**
 
 ---
 
