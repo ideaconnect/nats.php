@@ -135,7 +135,6 @@ class SubjectTest extends FunctionalTestCase
     public function testUnsubscribe()
     {
         $property = new ReflectionProperty(Client::class, 'handlers');
-        $property->setAccessible(true);
 
         $client = $this->createClient();
 
@@ -159,7 +158,6 @@ class SubjectTest extends FunctionalTestCase
     public function testUnsubscribeAll(): void
     {
         $property = new ReflectionProperty(Client::class, 'handlers');
-        $property->setAccessible(true);
 
         $client = $this->createClient();
 
@@ -176,7 +174,6 @@ class SubjectTest extends FunctionalTestCase
     public function testDisconnect(): void
     {
         $property = new ReflectionProperty(Client::class, 'handlers');
-        $property->setAccessible(true);
 
         $client = $this->createClient();
         $connection = $client->connection;
@@ -191,7 +188,6 @@ class SubjectTest extends FunctionalTestCase
         self::assertCount(0, $property->getValue($client));
 
         $property = new ReflectionProperty(Connection::class, 'socket');
-        $property->setAccessible(true);
 
         // Assert that the socket is closed and set to null
         self::assertNull($property->getValue($connection));
