@@ -26,38 +26,20 @@ class StreamTest extends FunctionalTestCase
 
     public function testInvalidAckPolicy()
     {
-        $this->expectExceptionMessage("Invalid ack policy: fast");
-
-        $this->createClient()
-            ->getApi()
-            ->getStream('acking')
-            ->getConsumer('tester')
-            ->getConfiguration()
-            ->setAckPolicy('fast');
+        $this->expectException(\ValueError::class);
+        AckPolicy::from('fast');
     }
 
     public function testInvalidDeliverPolicy()
     {
-        $this->expectExceptionMessage("Invalid deliver policy: turtle");
-
-        $this->createClient()
-            ->getApi()
-            ->getStream('acking')
-            ->getConsumer('tester')
-            ->getConfiguration()
-            ->setDeliverPolicy('turtle');
+        $this->expectException(\ValueError::class);
+        DeliverPolicy::from('turtle');
     }
 
     public function testInvalidReplayPolicy()
     {
-        $this->expectExceptionMessage("Invalid replay policy: fast");
-
-        $this->createClient()
-            ->getApi()
-            ->getStream('acking')
-            ->getConsumer('tester')
-            ->getConfiguration()
-            ->setReplayPolicy('fast');
+        $this->expectException(\ValueError::class);
+        ReplayPolicy::from('fast');
     }
 
     public function testNack()
@@ -203,8 +185,8 @@ class StreamTest extends FunctionalTestCase
 
         $configuration = $api->getStream('tester')
             ->getConfiguration();
-        self::assertSame($configuration->getRetentionPolicy(), 'limits');
-        self::assertSame($configuration->getStorageBackend(), 'memory');
+        self::assertSame($configuration->getRetentionPolicy(), RetentionPolicy::LIMITS);
+        self::assertSame($configuration->getStorageBackend(), StorageBackend::MEMORY);
         self::assertSame($configuration->getSubjects(), ['tester.greet', 'tester.bye']);
     }
 
@@ -378,8 +360,8 @@ class StreamTest extends FunctionalTestCase
             ->fromArray($stream->getConfiguration()->toArray());
 
         $configuration = $api->getStream('tester')->getConfiguration();
-        $this->assertSame($configuration->getRetentionPolicy(), 'workqueue');
-        $this->assertSame($configuration->getStorageBackend(), 'memory');
+        $this->assertSame($configuration->getRetentionPolicy(), RetentionPolicy::WORK_QUEUE);
+        $this->assertSame($configuration->getStorageBackend(), StorageBackend::MEMORY);
         $this->assertSame($configuration->getSubjects(), ['tester.greet', 'tester.bye']);
     }
 
@@ -420,7 +402,7 @@ class StreamTest extends FunctionalTestCase
         $this->called = null;
         $consumer = $stream->getConsumer('bye');
         $consumer->getConfiguration()->setSubjectFilter('tester.bye');
-        $consumer->getConfiguration()->setAckPolicy('explicit');
+        $consumer->getConfiguration()->setAckPolicy(AckPolicy::EXPLICIT);
         $consumer->create();
 
         $stream->put('tester.greet', [ 'name' => 'nekufa' ]);
@@ -534,7 +516,7 @@ class StreamTest extends FunctionalTestCase
 
         $this->called = null;
         $configuration = new Configuration('my_stream');
-        $configuration->setSubjectFilter('tester.bye')->setAckPolicy('explicit');
+        $configuration->setSubjectFilter('tester.bye')->setAckPolicy(AckPolicy::EXPLICIT);
         $consumer2 = $stream->createEphemeralConsumer($configuration);
 
         $stream->put('tester.greet', [ 'name' => 'oxidmod' ]);

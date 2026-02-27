@@ -11,11 +11,11 @@
 
 Critical issues found during the codebase audit that should be resolved before any feature work.
 
-- [x] **Fix `Client::unsubscribeRequests()` inverted logic** — the method sends an unsubscribe message when `$this->requestsSubscribed` is `false` (i.e. when *not* subscribed), then sets it to `true`. The condition is inverted.
-- [x] **Fix `ServiceEndpoint::$num_requests` off-by-one** — `$num_requests` is initialized to `1` instead of `0` in both the constructor and `resetStats()`, causing every endpoint to report one extra request.
-- [x] **Fix `Stream\Configuration::toArray()` null multiplication** — `$this->getDuplicateWindow() * 1_000_000_000` will throw a `TypeError` if `getDuplicateWindow()` returns `null`.
-- [x] **Add missing `declare(strict_types=1)`** to all 7 files in `src/Service/`: `Service.php`, `ServiceEndpoint.php`, `ServiceGroup.php`, `EndpointHandler.php`, `Response/Info.php`, `Response/Ping.php`, `Response/Stats.php`.
-- [x] **Fix README badges** — currently point to upstream `basis-company/nats.php` instead of this fork.
+- [v] **Fix `Client::unsubscribeRequests()` inverted logic** — the method sends an unsubscribe message when `$this->requestsSubscribed` is `false` (i.e. when *not* subscribed), then sets it to `true`. The condition is inverted.
+- [v] **Fix `ServiceEndpoint::$num_requests` off-by-one** — `$num_requests` is initialized to `1` instead of `0` in both the constructor and `resetStats()`, causing every endpoint to report one extra request.
+- [v] **Fix `Stream\Configuration::toArray()` null multiplication** — `$this->getDuplicateWindow() * 1_000_000_000` will throw a `TypeError` if `getDuplicateWindow()` returns `null`.
+- [v] **Add missing `declare(strict_types=1)`** to all 7 files in `src/Service/`: `Service.php`, `ServiceEndpoint.php`, `ServiceGroup.php`, `EndpointHandler.php`, `Response/Info.php`, `Response/Ping.php`, `Response/Stats.php`.
+- [v] **Fix README badges** — currently point to upstream `basis-company/nats.php` instead of this fork.
 
 ---
 
@@ -27,12 +27,12 @@ Bring the codebase up to modern PHP 8.2+ standards and improve developer experie
 
 Replace the 6 abstract-class pseudo-enums with native PHP 8.2+ backed enums:
 
-- [ ] `Stream\DiscardPolicy` (currently abstract class with string constants)
-- [ ] `Stream\RetentionPolicy`
-- [ ] `Stream\StorageBackend`
-- [ ] `Consumer\AckPolicy`
-- [ ] `Consumer\DeliverPolicy`
-- [ ] `Consumer\ReplayPolicy`
+- [v] `Stream\DiscardPolicy` (currently abstract class with string constants)
+- [v] `Stream\RetentionPolicy`
+- [v] `Stream\StorageBackend`
+- [v] `Consumer\AckPolicy`
+- [v] `Consumer\DeliverPolicy`
+- [v] `Consumer\ReplayPolicy`
 
 ### 1.2 Type Safety
 
@@ -53,22 +53,20 @@ Too many `private` properties prevent subclassing and adapter creation in librar
 - [ ] `KeyValue\Bucket`: `$stream`, `$streamName`, `$streamConfiguration`.
 - [ ] `Consumer\Configuration` and `Stream\Configuration`: all private properties.
 
-### 1.4 Deprecations Cleanup
+### 1.4 Tooling & Dependencies
 
-- [ ] Remove or properly deprecate the legacy `$options`/`$options2`/`$options3` array parameters in `Configuration` constructor. Add `@deprecated` annotations and a target removal version if kept temporarily.
-
-### 1.5 Tooling & Dependencies
-
-- [ ] **Upgrade PHPUnit** from `^9.5` to `^10` or `^11` (PHPUnit 9 is EOL for PHP 8.2+; remove deprecated config attributes like `convertErrorsToExceptions`).
-- [ ] **Upgrade Monolog** from `^2.3.5` to `^3`.
-- [ ] **Consolidate CS tools** — both `phpcs.xml` (PHPCS) and `.php-cs-fixer.php` (PHP-CS-Fixer) exist; pick one and remove the other.
-- [ ] **Add PHPStan** (level 6+) alongside or replacing Phan for static analysis — PHPStan has broader ecosystem adoption and better IDE integration.
+- [v] **Upgrade PHPUnit** from `^9.5` to `^10` or `^11` (PHPUnit 9 is EOL for PHP 8.2+; remove deprecated config attributes like `convertErrorsToExceptions`).
+- [v] **Upgrade Monolog** from `^2.3.5` to `^3`.
+- [v] **Consolidate CS tools** — both `phpcs.xml` (PHPCS) and `.php-cs-fixer.php` (PHP-CS-Fixer) exist; pick one and remove the other.
+- [x] **Add PHPStan** (level 6+) alongside or replacing Phan for static analysis — PHPStan has broader ecosystem adoption and better IDE integration.
 
 ---
 
 ## Phase 2 — Architecture & Extensibility
 
 Restructure the library for extensibility, testability, and decoupled integration by downstream libraries.
+
+- [ ] Remove or properly deprecate the legacy `$options`/`$options2`/`$options3` array parameters in `Configuration` constructor. Add `@deprecated` annotations and a target removal version if kept temporarily. BC-break.
 
 ### 2.1 Interfaces / Contracts
 
@@ -199,10 +197,10 @@ Add unit tests for all currently untested classes (no live NATS server required)
 
 ### 4.3 CI Modernization
 
-- [ ] Upgrade `actions/checkout` from `v2` to `v4`.
-- [ ] Add Composer dependency caching (`actions/cache`).
-- [ ] **Parallelize CI jobs** — `editorconfig-verify`, `php-cs-verify`, and `static-analysis` are currently sequential; they are independent and should run in parallel.
-- [ ] Add code coverage thresholds / quality gates (fail CI if coverage drops below X%).
+- [v] Upgrade `actions/checkout` from `v2` to `v4`.
+- [x] Add Composer dependency caching (`actions/cache`).
+- [x] **Parallelize CI jobs** — `editorconfig-verify`, `php-cs-verify`, and `static-analysis` are currently sequential; they are independent and should run in parallel.
+- [v] Add code coverage thresholds / quality gates (fail CI if coverage drops below X%).
 - [ ] Add matrix for new features (Object Store tests, multi-server tests).
 - [ ] Consider adding mutation testing (e.g. Infection) for test quality measurement.
 
@@ -212,7 +210,7 @@ Add unit tests for all currently untested classes (no live NATS server required)
 
 ### 5.1 README Overhaul
 
-- [ ] Replace all badges to point to this fork (`idct/nats-jetstream-php-client`).
+- [v] Replace all badges to point to this fork (`idct/nats-jetstream-php-client`).
 - [ ] Fix code examples (TLS syntax error, etc.).
 - [ ] Add sections for new features (Object Store, ordered consumers, multi-server).
 - [ ] Add quick-start section with minimal working example.

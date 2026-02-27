@@ -57,7 +57,7 @@ class Base32Test extends TestCase
         $base32->decode($input);
     }
 
-    public function invalidInputProvider(): array
+    public static function invalidInputProvider(): array
     {
         return [
             ["aa?"],
@@ -73,7 +73,7 @@ class Base32Test extends TestCase
         $this->assertEquals("", $base32->decode(""));
     }
 
-    public function dataProvider(): array
+    public static function dataProvider(): array
     {
         return [
             ["SUAALXURZGZFICARCJRNP5FKO2NW2DED46LNDDGJ4HWNC3G26VZ5BBZAME", "950005de91c9b25408111262d7f4aa769b6d0c83e796d18cc9e1ecd16cdaf573d0872061"],

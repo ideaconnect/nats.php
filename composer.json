@@ -6,8 +6,8 @@
         "php": ">=8.2"
     },
     "require-dev": {
-        "phpunit/phpunit": "^9.5",
-        "monolog/monolog": "^2.3.5",
+        "phpunit/phpunit": "^11",
+        "monolog/monolog": "^3",
         "friendsofphp/php-cs-fixer": "^3.9",
         "phan/phan": "^6"
     },

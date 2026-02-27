@@ -19,7 +19,7 @@ class CRC16Test extends TestCase
         $this->assertEquals($expected, $result);
     }
 
-    public function dataProvider(): array
+    public static function dataProvider(): array
     {
         return [
             [unpack('C*', hex2bin("6dbdcb0a7b213d6c04f55b6436afaf224ee52fba6cc9ba4da573b13ba8102012")), 38323],

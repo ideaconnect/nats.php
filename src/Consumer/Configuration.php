@@ -24,9 +24,9 @@ class Configuration
     private ?string $deliverSubject = null;
     private ?string $description = null;
     private ?string $subjectFilter = null;
-    private string $ackPolicy = AckPolicy::EXPLICIT;
-    private string $deliverPolicy = DeliverPolicy::ALL;
-    private string $replayPolicy = ReplayPolicy::INSTANT;
+    private AckPolicy $ackPolicy = AckPolicy::EXPLICIT;
+    private DeliverPolicy $deliverPolicy = DeliverPolicy::ALL;
+    private ReplayPolicy $replayPolicy = ReplayPolicy::INSTANT;
     private ?int $inactiveThreshold = null;
 
     public function __construct(
@@ -35,7 +35,7 @@ class Configuration
     ) {
     }
 
-    public function getAckPolicy(): string
+    public function getAckPolicy(): AckPolicy
     {
         return $this->ackPolicy;
     }
@@ -65,7 +65,7 @@ class Configuration
         return $this->deliverGroup;
     }
 
-    public function getDeliverPolicy()
+    public function getDeliverPolicy(): DeliverPolicy
     {
         return $this->deliverPolicy;
     }
@@ -120,7 +120,7 @@ class Configuration
         return $this->startTime;
     }
 
-    public function getReplayPolicy()
+    public function getReplayPolicy(): ReplayPolicy
     {
         return $this->replayPolicy;
     }
@@ -136,9 +136,9 @@ class Configuration
         return $this;
     }
 
-    public function setAckPolicy(string $ackPolicy): self
+    public function setAckPolicy(AckPolicy $ackPolicy): self
     {
-        $this->ackPolicy = AckPolicy::validate($ackPolicy);
+        $this->ackPolicy = $ackPolicy;
         return $this;
     }
 
@@ -148,9 +148,9 @@ class Configuration
         return $this;
     }
 
-    public function setDeliverPolicy(string $deliverPolicy): self
+    public function setDeliverPolicy(DeliverPolicy $deliverPolicy): self
     {
-        $this->deliverPolicy = DeliverPolicy::validate($deliverPolicy);
+        $this->deliverPolicy = $deliverPolicy;
         return $this;
     }
 
@@ -193,9 +193,9 @@ class Configuration
         return $this;
     }
 
-    public function setReplayPolicy(string $replayPolicy): self
+    public function setReplayPolicy(ReplayPolicy $replayPolicy): self
     {
-        $this->replayPolicy = ReplayPolicy::validate($replayPolicy);
+        $this->replayPolicy = $replayPolicy;
         return $this;
     }
 
@@ -219,10 +219,10 @@ class Configuration
     public function toArray(): array
     {
         $config = [
-            'ack_policy' => $this->getAckPolicy(),
+            'ack_policy' => $this->ackPolicy->value,
             'ack_wait' => $this->getAckWait(),
             'deliver_group' => $this->getDeliverGroup(),
-            'deliver_policy' => $this->getDeliverPolicy(),
+            'deliver_policy' => $this->deliverPolicy->value,
             'deliver_subject' => $this->getDeliverSubject(),
             'description' => $this->getDescription(),
             'durable_name' => $this->isEphemeral() ? null : $this->getName(),
@@ -232,7 +232,7 @@ class Configuration
             'max_ack_pending' => $this->getMaxAckPending(),
             'max_deliver' => $this->getMaxDeliver(),
             'max_waiting' => $this->getMaxWaiting(),
-            'replay_policy' => $this->getReplayPolicy(),
+            'replay_policy' => $this->replayPolicy->value,
             'inactive_threshold' => $this->getInactiveThreshold(),
         ];
 

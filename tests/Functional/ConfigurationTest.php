@@ -4,6 +4,9 @@ declare(strict_types=1);
 
 namespace Tests\Functional;
 
+use Basis\Nats\Stream\DiscardPolicy;
+use Basis\Nats\Stream\RetentionPolicy;
+use Basis\Nats\Stream\StorageBackend;
 use Tests\FunctionalTestCase;
 
 class ConfigurationTest extends FunctionalTestCase
@@ -25,31 +28,19 @@ class ConfigurationTest extends FunctionalTestCase
 
     public function testStreamConfgurationInvalidStorageBackend()
     {
-        $this->expectExceptionMessage("Invalid storage backend");
-        $this->createClient()
-            ->getApi()
-            ->getStream('tester')
-            ->getConfiguration()
-            ->setStorageBackend('s3');
+        $this->expectException(\ValueError::class);
+        StorageBackend::from('s3');
     }
 
     public function testStreamConfgurationInvalidRetentionPolicy()
     {
-        $this->expectExceptionMessage("Invalid retention policy");
-        $this->createClient()
-            ->getApi()
-            ->getStream('tester')
-            ->getConfiguration()
-            ->setRetentionPolicy('lucky');
+        $this->expectException(\ValueError::class);
+        RetentionPolicy::from('lucky');
     }
 
     public function testStreamConfgurationInvalidDiscardPolicy()
     {
-        $this->expectExceptionMessage("Invalid discard policy");
-        $this->createClient()
-            ->getApi()
-            ->getStream('tester')
-            ->getConfiguration()
-            ->setDiscardPolicy('lucky');
+        $this->expectException(\ValueError::class);
+        DiscardPolicy::from('lucky');
     }
 }

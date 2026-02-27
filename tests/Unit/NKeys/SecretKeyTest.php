@@ -44,7 +44,7 @@ class SecretKeyTest extends TestCase
         SecretKey::fromSeed($seed);
     }
 
-    public function invalidSeedProvider(): array
+    public static function invalidSeedProvider(): array
     {
         return [
             ["XYAALXURZGZFICARCJRNP5FKO2NW2DED46LNDDGJ4HWNC3G26VZ5BBZAME"],

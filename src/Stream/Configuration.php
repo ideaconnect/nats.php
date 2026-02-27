@@ -14,9 +14,9 @@ class Configuration
     private int $maxAge = 0;
     private int $maxConsumers = -1;
     private int $replicas = 1;
-    private string $discardPolicy = DiscardPolicy::OLD;
-    private string $retentionPolicy = RetentionPolicy::LIMITS;
-    private string $storageBackend = StorageBackend::FILE;
+    private DiscardPolicy $discardPolicy = DiscardPolicy::OLD;
+    private RetentionPolicy $retentionPolicy = RetentionPolicy::LIMITS;
+    private StorageBackend $storageBackend = StorageBackend::FILE;
 
     private ?float $duplicateWindow = null;
     private ?int $maxBytes = null;
@@ -34,11 +34,11 @@ class Configuration
     public function fromArray(array $array): self
     {
         $this
-            ->setDiscardPolicy($array['discard'])
+            ->setDiscardPolicy(DiscardPolicy::from($array['discard']))
             ->setMaxConsumers($array['max_consumers'])
             ->setReplicas($array['replicas'] ?? $array['num_replicas'])
-            ->setRetentionPolicy($array['retention'])
-            ->setStorageBackend($array['storage'])
+            ->setRetentionPolicy(RetentionPolicy::from($array['retention']))
+            ->setStorageBackend(StorageBackend::from($array['storage']))
             ->setSubjects($array['subjects']);
 
         if (isset($array['allow_msg_schedules'])) {
@@ -63,7 +63,7 @@ class Configuration
         return $this->denyDelete;
     }
 
-    public function getDiscardPolicy(): string
+    public function getDiscardPolicy(): DiscardPolicy
     {
         return $this->discardPolicy;
     }
@@ -108,12 +108,12 @@ class Configuration
         return $this->replicas;
     }
 
-    public function getRetentionPolicy(): string
+    public function getRetentionPolicy(): RetentionPolicy
     {
         return $this->retentionPolicy;
     }
 
-    public function getStorageBackend(): string
+    public function getStorageBackend(): StorageBackend
     {
         return $this->storageBackend;
     }
@@ -135,9 +135,9 @@ class Configuration
         return $this;
     }
 
-    public function setDiscardPolicy(string $policy): self
+    public function setDiscardPolicy(DiscardPolicy $policy): self
     {
-        $this->discardPolicy = DiscardPolicy::validate($policy);
+        $this->discardPolicy = $policy;
         return $this;
     }
 
@@ -186,15 +186,15 @@ class Configuration
         return $this;
     }
 
-    public function setRetentionPolicy(string $policy): self
+    public function setRetentionPolicy(RetentionPolicy $policy): self
     {
-        $this->retentionPolicy = RetentionPolicy::validate($policy);
+        $this->retentionPolicy = $policy;
         return $this;
     }
 
-    public function setStorageBackend(string $storage): self
+    public function setStorageBackend(StorageBackend $storage): self
     {
-        $this->storageBackend = StorageBackend::validate($storage);
+        $this->storageBackend = $storage;
         return $this;
     }
 
@@ -265,7 +265,7 @@ class Configuration
             'allow_rollup_hdrs' => $this->getAllowRollupHeaders(),
             'deny_delete' => $this->getDenyDelete(),
             'description' => $this->getDescription(),
-            'discard' => $this->getDiscardPolicy(),
+            'discard' => $this->discardPolicy->value,
             'duplicate_window' => ($dw = $this->getDuplicateWindow()) !== null ? (int)($dw * 1_000_000_000) : null,
             'max_age' => $this->getMaxAge(),
             'max_bytes' => $this->getMaxBytes(),
@@ -274,8 +274,8 @@ class Configuration
             'max_msgs_per_subject' => $this->getMaxMessagesPerSubject(),
             'name' => $this->getName(),
             'num_replicas' => $this->getReplicas(),
-            'retention' => $this->getRetentionPolicy(),
-            'storage' => $this->getStorageBackend(),
+            'retention' => $this->retentionPolicy->value,
+            'storage' => $this->storageBackend->value,
             'subjects' => $this->getSubjects(),
             'consumer_limits' => $this->getConsumerLimits(),
             'allow_msg_schedules' => $this->getAllowMsgSchedules(),

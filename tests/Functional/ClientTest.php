@@ -9,6 +9,7 @@ use Basis\Nats\Message\Factory;
 use Basis\Nats\Message\Subscribe;
 use Monolog\Handler\StreamHandler;
 use Monolog\Logger;
+use Monolog\LogRecord;
 use ReflectionProperty;
 use Tests\FunctionalTestCase;
 
@@ -45,9 +46,9 @@ class ClientTest extends FunctionalTestCase
         assert($client->connection->logger instanceof Logger);
         $client->connection->logger->pushHandler($spy = new class ('') extends StreamHandler {
             public array $records = [];
-            protected function write(array $record): void
+            protected function write(LogRecord $record): void
             {
-                $this->records[] = $record['message'];
+                $this->records[] = $record->message;
             }
         });
 
