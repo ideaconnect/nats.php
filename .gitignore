@@ -8,3 +8,5 @@ vendor
 .idea
 .php-cs-fixer.cache
 phpunit.xml
+
+coverage/

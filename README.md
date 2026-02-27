@@ -1,37 +1,63 @@
-# Nats client for php
+# NATS JetStream Client for PHP
+
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
-[![Testing](https://github.com/basis-company/nats.php/actions/workflows/tests.yml/badge.svg)](https://github.com/basis-company/nats.php/actions/workflows/tests.yml)
-[![Coverage Status](https://coveralls.io/repos/github/basis-company/nats.php/badge.svg)](https://coveralls.io/github/basis-company)
-[![Latest Version](https://img.shields.io/github/release/basis-company/nats.php.svg)](https://github.com/basis-company/nats.php/releases)
-[![Total Downloads](https://img.shields.io/packagist/dt/basis-company/nats.svg)](https://packagist.org/packages/basis-company/nats)
+[![CI](https://github.com/idct/nats-jetstream-php-client/actions/workflows/ci.yml/badge.svg)](https://github.com/idct/nats-jetstream-php-client/actions/workflows/ci.yml)
+[![Latest Version](https://img.shields.io/github/release/idct/nats-jetstream-php-client.svg)](https://github.com/idct/nats-jetstream-php-client/releases)
+[![Total Downloads](https://img.shields.io/packagist/dt/idct/nats-jetstream-php-client.svg)](https://packagist.org/packages/idct/nats-jetstream-php-client)
 
-# IMPORTANT
+A PHP client for [NATS](https://nats.io/) with full JetStream, Key-Value, and Microservices support. Targets **NATS 2.12+**.
 
-This is a shim fork of the *[nats.php](https://github.com/basis-company/nats.php)* by *basis-company*.
-Its sole purpose is to provide stable updates with newer functionalities required for the [symfony-nats-messenger](https://github.com/ideaconnect/symfony-nats-messenger/).
+## About This Fork
 
----
+This library was originally forked from [basis-company/nats.php](https://github.com/basis-company/nats.php) in February 2026, driven by the need for timely updates and new features required by [idct/symfony-nats-messenger](https://github.com/ideaconnect/symfony-nats-messenger/).
 
-Feel free to contribute or give any feedback.
+Since then, the library has taken its own development direction and **will continue to diverge** from the original. The intent is to actively develop this library to provide comprehensive, production-ready NATS support for PHP — including modern NATS 2.12+ features, improved extensibility, and better code quality.
 
-- [Nats client for php](#nats-client-for-php)
-  - [Installation](#installation)
-  - [Connecting](#connecting)
-    - [Connecting with TLS](#connecting-with-tls)
-    - [Connecting with JWT](#connecting-with-jwt)
-  - [Publish Subscribe](#publish-subscribe)
-  - [Request Response](#request-response)
-  - [JetStream Api Usage](#jetstream-api-usage)
-  - [Message Scheduling](#message-scheduling)
-  - [Microservices](#microservices)
-  - [Key Value Storage](#key-value-storage)
-  - [Performance](#performance)
-  - [Configuration Options](#configuration-options)
+See the [ROADMAP](UPGRADE_ROADMAP.md) for the full development plan.
+
+> **Note:** The library currently retains the original `Basis\Nats\` namespace for backward compatibility. A namespace migration is planned — see the roadmap for details.
+
+Contributions, feedback, and bug reports are welcome.
+
+## Features
+
+- **Core NATS** — publish/subscribe, request/reply, queue groups
+- **JetStream** — streams, durable & ephemeral consumers, ack/nak/term/progress
+- **Key-Value Store** — get, put, update, delete, purge, history
+- **Microservices** — service discovery, endpoint groups, ping/info/stats
+- **Message Scheduling** — `@at`, `@every`, cron expressions (NATS 2.12+)
+- **Authentication** — user/pass, token, NKey (Ed25519), JWT, TLS client certificates
+- **Headers** — full HMSG/HPUB support, message deduplication via `Nats-Msg-Id`
+- **Reconnection** — automatic reconnect with configurable delay strategies
+
+## Requirements
+
+- PHP **>= 8.2**
+- NATS Server **>= 2.10** (2.12+ recommended for full feature support)
+- `ext-sodium` or `paragonie/sodium_compat` (only for NKey authentication)
+
+## Table of Contents
+
+- [Installation](#installation)
+- [Connecting](#connecting)
+  - [Connecting with TLS](#connecting-with-tls)
+  - [Connecting with JWT](#connecting-with-jwt)
+- [Publish Subscribe](#publish-subscribe)
+- [Request Response](#request-response)
+- [JetStream API Usage](#jetstream-api-usage)
+- [Message Scheduling](#message-scheduling)
+- [Microservices](#microservices)
+- [Key Value Storage](#key-value-storage)
+- [Performance](#performance)
+- [Configuration Options](#configuration-options)
+- [Roadmap](#roadmap)
+- [Contributing](#contributing)
+- [Acknowledgements](#acknowledgements)
 
 ## Installation
 The recommended way to install the library is through [Composer](http://getcomposer.org):
 ```bash
-$ composer require basis-company/nats
+composer require idct/nats-jetstream-php-client
 ```
 
 The NKeys functionality requires Ed25519, which is provided in `libsodium` extension or `sodium_compat` package.
@@ -41,7 +67,7 @@ The NKeys functionality requires Ed25519, which is provided in `libsodium` exten
 use Basis\Nats\Client;
 use Basis\Nats\Configuration;
 
-// you can override any default configuraiton key using constructor
+// you can override any default configuration key using constructor
 $configuration = new Configuration(
     host: 'nats-service',
     user: 'basis',
@@ -79,12 +105,12 @@ Connection settings when connecting to a nats server that has TLS and TLS Client
 use Basis\Nats\Client;
 use Basis\Nats\Configuration;
 
-// you can override any default configuraiton key using constructor
+// you can override any default configuration key using constructor
 $configuration = new Configuration(
     host: 'tls-service-endpoint',
     tlsCertFile: "./certs/client-cert.pem",
-    tlsKeyFile': "./certs/client-key.pem",
-    tlsCaFile': "./certs/client-key.pem",
+    tlsKeyFile: "./certs/client-key.pem",
+    tlsCaFile: "./certs/ca-cert.pem",
 );
 
 $configuration->setDelay(0.001);
@@ -104,7 +130,7 @@ use Basis\Nats\Configuration;
 use Basis\Nats\NKeys\CredentialsParser;
 
 $configuration = new Configuration(
-    CredentialsParser::fromFile($credentialPath)
+    ...CredentialsParser::fromFile($credentialPath),
     host: 'localhost',
     port: 4222,
 );
@@ -444,48 +470,23 @@ var_dump($bucket->getAll()); // ['email' => 'nekufa@gmail.com', 'username' => 'n
 ```
 
 ## Performance
-Testing on AMD Ryzen 5 3600X with nats running in docker gives about 370k rps for publish and 360k rps for receive in non-verbose mode.
 
-You can run tests on your environment.
+Benchmarks on an AMD Ryzen 5 3600X with NATS running in Docker show approximately **370k msg/s** for publishing and **360k msg/s** for receiving in non-verbose mode.
+
+Run the performance test suite on your own environment:
+
 ```bash
- % wget https://getcomposer.org/download/latest-stable/composer.phar
-...
-Saving to: ‘composer.phar’
+# start a local NATS instance (e.g. using the bundled Docker setup)
+cd docker && docker compose up -d && cd ..
 
- % ./composer.phar install
-Installing dependencies from lock file (including require-dev)
-...
+# install dependencies
+composer install
 
- % export NATS_HOST=0.0.0.0
- % export NATS_PORT=4222
- % export NATS_CLIENT_LOG=1
- % composer run perf-test
-PHPUnit 9.6.18 by Sebastian Bergmann and contributors.
-
-Runtime:       PHP 8.3.11
-Configuration: /home/nekufa/software/github/nats.php/phpunit.xml
-Warning:       No code coverage driver available
-
-[2024-12-24T12:07:04.063687+00:00] PerformanceTest.testPerformance.DEBUG: send CONNECT {"headers":true,"pedantic":false,"verbose":false,"lang":"php","version":"dev"}  [] []
-[2024-12-24T12:07:04.063725+00:00] PerformanceTest.testPerformance.INFO: start performance test [] []
-[2024-12-24T12:07:05.391707+00:00] PerformanceTest.testPerformance.INFO: publishing {"rps":376536.0,"length":500000,"time":1.3278908729553223} []
-[2024-12-24T12:07:06.762321+00:00] PerformanceTest.testPerformance.INFO: processing {"rps":364814.0,"length":500000,"time":1.3705589771270752} []
-
- % export NATS_CLIENT_VERBOSE=1
- % composer run perf-test
-PHPUnit 9.6.18 by Sebastian Bergmann and contributors.
-
-Runtime:       PHP 8.3.11
-Configuration: /home/nekufa/software/github/nats.php/phpunit.xml
-Warning:       No code coverage driver available
-
-[2024-12-24T12:07:43.721568+00:00] PerformanceTest.testPerformance.DEBUG: send CONNECT {"headers":true,"pedantic":false,"verbose":true,"lang":"php","version":"dev"}  [] []
-[2024-12-24T12:07:43.721606+00:00] PerformanceTest.testPerformance.INFO: start performance test [] []
-[2024-12-24T12:07:45.053410+00:00] PerformanceTest.testPerformance.INFO: publishing {"rps":375456.0,"length":500000,"time":1.3317129611968994} []
-[2024-12-24T12:07:46.566548+00:00] PerformanceTest.testPerformance.INFO: processing {"rps":330450.0,"length":500000,"time":1.513084888458252} []
-
-nekufa@fasiga ~ % cat /proc/cpuinfo | grep AMD
-model name	: AMD Ryzen 5 3600X 6-Core Processor
+# run the benchmark
+export NATS_HOST=0.0.0.0
+export NATS_PORT=4222
+export NATS_CLIENT_LOG=1
+composer run perf-test
 ```
 
 ## Configuration Options
@@ -509,3 +510,41 @@ The following is the list of configuration options and default values.
 | `tlsCaFile`         |            | TLS 1.2 CA certificate filepath.                                                                                                                                                            |
 | `user`              |            | Sets the username for a connection.                                                                                                                                                         |
 | `verbose`           | `false`    | Turns on `+OK` protocol acknowledgements.                                                                                                                                                   |
+
+## Roadmap
+
+This library is under active development. See [ROADMAP.md](ROADMAP.md) for the full plan covering:
+
+- Bug fixes and code quality improvements
+- Modern PHP 8.2+ features (native enums, typed properties)
+- Architectural changes for extensibility (interfaces, custom exceptions, decoupled components)
+- NATS 2.12+ feature completeness (Object Store, ordered consumers, multi-server clusters, drain mode)
+- Expanded test coverage and CI modernization
+
+## Contributing
+
+Contributions are welcome! Please:
+
+1. Fork the repository
+2. Create a feature branch
+3. Ensure `composer static-analysis` and `composer test` pass.
+4. Submit a pull request
+
+Use the dockerized NATS instances from the `docker/` folder for running functional tests.
+
+## Acknowledgements
+
+This library is built on the excellent foundation laid by **Dmitry Krokhin** ([@nekufa](https://github.com/nekufa)) and the contributors to [basis-company/nats.php](https://github.com/basis-company/nats.php).
+
+A huge thank you to Dmitry for creating and open-sourcing `nats.php` — the core protocol implementation, JetStream support, NKey authentication, and overall architecture that this library builds upon are all his work. Without that foundation, this fork would not exist.
+
+If your use case is covered by the original library and its release cadence works for you, please consider using and contributing to [basis-company/nats.php](https://github.com/basis-company/nats.php) directly.
+
+# 💖 Love my work? Support it! 🚀
+
+* 💝 **Sponsor**: https://github.com/sponsors/ideaconnect
+* ☕ **Buy me a coffee**: https://buymeacoffee.com/idct
+* 🪙 **BTC**: bc1qntms755swm3nplsjpllvx92u8wdzrvs474a0hr
+* 💎 **ETH**: 0x08E27250c91540911eD27F161572aFA53Ca24C0a
+* ⚡ **TRX**: TVXWaU4ScNV9RBYX5RqFmySuB4zF991QaE
+* 🚀 **LTC**: LN5ApP1Yhk4iU9Bo1tLU8eHX39zDzzyZxB
