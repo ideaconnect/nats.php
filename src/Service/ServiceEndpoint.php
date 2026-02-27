@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 namespace Basis\Nats\Service;
 
@@ -8,7 +9,7 @@ use Basis\Nats\Queue;
 
 class ServiceEndpoint
 {
-    private int $num_requests = 1;
+    private int $num_requests = 0;
     private int $num_errors = 0;
     private string $last_error = '';
     private float $processing_time = 0;
@@ -78,7 +79,7 @@ class ServiceEndpoint
 
     public function getAverageProcessingTime(): float
     {
-        return round($this->getProcessingTime() / $this->getNumRequests());
+        return $this->getNumRequests() > 0 ? round($this->getProcessingTime() / $this->getNumRequests()) : 0;
     }
 
     public function getLastError(): string
@@ -103,7 +104,7 @@ class ServiceEndpoint
 
     public function resetStats(): void
     {
-        $this->num_requests = 1;
+        $this->num_requests = 0;
         $this->num_errors = 0;
         $this->processing_time = 0;
         $this->last_error = '';

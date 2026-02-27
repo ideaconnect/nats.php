@@ -307,9 +307,9 @@ class Client
 
     private function unsubscribeRequests(): void
     {
-        if (!$this->requestsSubscribed) {
+        if ($this->requestsSubscribed) {
             $this->connection->sendMessage(new Unsubscribe(['sid' => (string)$this->requestsSid]));
-            $this->requestsSubscribed = true;
+            $this->requestsSubscribed = false;
         }
     }
 

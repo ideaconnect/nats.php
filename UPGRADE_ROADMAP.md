@@ -11,12 +11,11 @@
 
 Critical issues found during the codebase audit that should be resolved before any feature work.
 
-- [ ] **Fix `Client::unsubscribeRequests()` inverted logic** — the method sends an unsubscribe message when `$this->requestsSubscribed` is `false` (i.e. when *not* subscribed), then sets it to `true`. The condition is inverted.
-- [ ] **Fix `ServiceEndpoint::$num_requests` off-by-one** — `$num_requests` is initialized to `1` instead of `0` in both the constructor and `resetStats()`, causing every endpoint to report one extra request.
-- [ ] **Fix `Stream\Configuration::toArray()` null multiplication** — `$this->getDuplicateWindow() * 1_000_000_000` will throw a `TypeError` if `getDuplicateWindow()` returns `null`.
-- [ ] **Add missing `declare(strict_types=1)`** to all 7 files in `src/Service/`: `Service.php`, `ServiceEndpoint.php`, `ServiceGroup.php`, `EndpointHandler.php`, `Response/Info.php`, `Response/Ping.php`, `Response/Stats.php`.
-- [ ] **Fix README badges** — currently point to upstream `basis-company/nats.php` instead of this fork.
-- [ ] **Fix TLS example in README** — uses Python-style colon syntax (`'tlsKeyFile':`) instead of PHP `=>`.
+- [x] **Fix `Client::unsubscribeRequests()` inverted logic** — the method sends an unsubscribe message when `$this->requestsSubscribed` is `false` (i.e. when *not* subscribed), then sets it to `true`. The condition is inverted.
+- [x] **Fix `ServiceEndpoint::$num_requests` off-by-one** — `$num_requests` is initialized to `1` instead of `0` in both the constructor and `resetStats()`, causing every endpoint to report one extra request.
+- [x] **Fix `Stream\Configuration::toArray()` null multiplication** — `$this->getDuplicateWindow() * 1_000_000_000` will throw a `TypeError` if `getDuplicateWindow()` returns `null`.
+- [x] **Add missing `declare(strict_types=1)`** to all 7 files in `src/Service/`: `Service.php`, `ServiceEndpoint.php`, `ServiceGroup.php`, `EndpointHandler.php`, `Response/Info.php`, `Response/Ping.php`, `Response/Stats.php`.
+- [x] **Fix README badges** — currently point to upstream `basis-company/nats.php` instead of this fork.
 
 ---
 

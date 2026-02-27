@@ -266,7 +266,7 @@ class Configuration
             'deny_delete' => $this->getDenyDelete(),
             'description' => $this->getDescription(),
             'discard' => $this->getDiscardPolicy(),
-            'duplicate_window' => $this->getDuplicateWindow() * 1_000_000_000,
+            'duplicate_window' => ($dw = $this->getDuplicateWindow()) !== null ? (int)($dw * 1_000_000_000) : null,
             'max_age' => $this->getMaxAge(),
             'max_bytes' => $this->getMaxBytes(),
             'max_consumers' => $this->getMaxConsumers(),
