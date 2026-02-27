@@ -29,5 +29,7 @@
       <directory>./tests/Performance</directory>
     </testsuite>
   </testsuites>
-  <logging/>
+  <logging>
+    <junit outputFile="coverage/junit.xml"/>
+  </logging>
 </phpunit>

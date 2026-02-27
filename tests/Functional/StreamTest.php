@@ -764,9 +764,11 @@ class StreamTest extends FunctionalTestCase
 
         $stream->create();
 
-        // Schedule a message for 2 seconds in the future.
-        // The "@at" directive takes an RFC3339 timestamp in UTC.
-        $deliverAt = gmdate('Y-m-d\TH:i:s\Z', time() + 2);
+        // Schedule a message for 4 seconds in the future.
+        // 4 seconds gives enough headroom so that the immediate early-fetch
+        // (which blocks for 1 second) cannot accidentally overlap with the
+        // delivery window even if stream/consumer setup takes some time.
+        $deliverAt = gmdate('Y-m-d\TH:i:s\Z', time() + 4);
 
         // Publish to the schedule trigger subject (sched.schedule).
         // The Nats-Schedule header tells the server WHEN to deliver.
@@ -792,8 +794,11 @@ class StreamTest extends FunctionalTestCase
             $earlyMessage = $msg;
         });
 
-        // Wait for the scheduled time to pass (2 seconds).
-        sleep(2);
+        $this->assertNull($earlyMessage, 'Message should not be available before the scheduled time');
+
+        // Wait for the scheduled time to pass (3 seconds is enough: delivery is
+        // at t+4 and at least 1 second has already elapsed during setup+fetch).
+        sleep(3);
 
         // Now fetch again — the message should have been delivered by the server
         // to the target subject.

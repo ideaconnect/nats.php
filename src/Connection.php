@@ -211,8 +211,11 @@ class Connection
             $this->connectMessage->name = $this->client->getName();
         }
 
-        $this->infoMessage = $this->getMessage($config->timeout);
-        assert($this->infoMessage instanceof Info);
+        $infoMessage = $this->getMessage($config->timeout);
+        if (!$infoMessage instanceof Info) {
+            throw new Exception('Expected INFO message from server, got: ' . ($infoMessage ? get_class($infoMessage) : 'null'));
+        }
+        $this->infoMessage = $infoMessage;
 
         if (isset($this->infoMessage->nonce) && $this->authenticator) {
             $this->connectMessage->sig = $this->authenticator->sign($this->infoMessage->nonce);

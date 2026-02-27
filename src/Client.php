@@ -61,12 +61,12 @@ class Client
 
         $result = $this->dispatch($subject, $options);
 
-        if ($result->error ?? false) {
-            throw new Exception($result->error->description, $result->error->err_code);
-        }
-
         if (!$result) {
             return null;
+        }
+
+        if ($result->error ?? false) {
+            throw new Exception($result->error->description, $result->error->err_code);
         }
 
         return $result;

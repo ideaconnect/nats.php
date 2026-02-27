@@ -129,6 +129,9 @@ class ConnectionTest extends FunctionalTestCase
             'subject' => $subject,
             'sid'     => $sid,
         ]));
+        // Flush: NATS processes SUB before returning PONG, ensuring the
+        // subscription is registered before we publish.
+        $connection2->ping();
 
         // Publish via the first connection
         $connection->sendMessage(new Publish([
@@ -170,6 +173,8 @@ class ConnectionTest extends FunctionalTestCase
             'subject' => $subject,
             'sid'     => 's2',
         ]));
+        // Flush subscription before publishing
+        $receiver->connection->ping();
 
         $client->connection->sendMessage(new Publish([
             'subject' => $subject,
