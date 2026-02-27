@@ -66,7 +66,7 @@ jobs:
         uses: php-actions/composer@v6
         with:
           php_version: ${{ matrix.php }}
-          php_extensions: curl zip xml dom mbstring
+          php_extensions: curl zip xml dom mbstring xdebug
           command: test
       - name: Coverage text report
         run: cat coverage/report.txt
