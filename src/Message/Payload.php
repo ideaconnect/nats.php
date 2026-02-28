@@ -3,8 +3,9 @@
 declare(strict_types=1);
 
 namespace Basis\Nats\Message;
+use Stringable;
 
-class Payload
+class Payload implements Stringable
 {
     public static function parse(mixed $data): self
     {

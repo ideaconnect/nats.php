@@ -15,13 +15,7 @@ class Configuration
     protected float $delay;
     protected string $delayMode;
 
-    /**
-     * @param array<string, string|int|bool|null> $options
-     */
     public function __construct(
-        array $options = [], // deprecated
-        array $options2 = [], // deprecated multi option array support
-        array $options3 = [], // deprecated multi option array support
         public string $host = 'localhost',
         public int $port = 4222,
         public ?string $user = null,
@@ -35,6 +29,7 @@ class Configuration
         public bool $tlsHandshakeFirst = false,
         public bool $pedantic = false,
         public bool $reconnect = true,
+        public ?int $maxReconnectAttempts = null,
         public bool $verbose = false,
         public float $timeout = 1,
         public int $pingInterval = 2,
@@ -46,19 +41,6 @@ class Configuration
     ) {
 
         $this->setDelay($delay, $delayMode);
-
-        foreach (array_merge($options, $options2, $options3) as $k => $v) {
-            if (!property_exists($this, $k)) {
-                throw new InvalidArgumentException("Invalid config option $k");
-            }
-            if ($k == 'delayMode') {
-                $this->setDelay($this->delay, $v);
-            } elseif ($k == 'delay') {
-                $this->setDelay($v, $this->delayMode);
-            } else {
-                $this->$k = $v;
-            }
-        }
     }
 
     public function getOptions(): array

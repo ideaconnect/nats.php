@@ -21,7 +21,10 @@ use Exception;
 
 class Connection
 {
+    /** @var resource|null */
     private $socket;
+
+    /** @var resource|null */
     private $context;
 
     private float $activityAt = 0;
@@ -160,6 +163,7 @@ class Connection
 
         if ($message instanceof Publish) {
             if (strpos($message->subject, '$JS.API.CONSUMER.MSG.NEXT.') === 0) {
+                //TODO specific valuse for specific message types to use instead of generic `expires` value.
                 $prolongate = $message->payload->expires / 1_000_000_000;
                 $this->prolongateTill = microtime(true) + $prolongate;
             }
@@ -286,12 +290,17 @@ class Connection
         }
 
         $iteration = 0;
+        $lastException = $e;
 
         while (true) {
+            if ($this->config->maxReconnectAttempts !== null && $iteration >= $this->config->maxReconnectAttempts) {
+                throw $lastException;
+            }
             try {
                 $this->socket = null;
                 $this->init();
             } catch (Throwable $e) {
+                $lastException = $e;
                 $this->config->delay($iteration++);
                 continue;
             }

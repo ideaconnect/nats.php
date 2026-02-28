@@ -25,6 +25,7 @@ class Configuration
     private ?string $description = null;
     private ?array $consumerLimits = null;
     private ?bool $allowMsgSchedules = null;
+    private ?Compression $compression = null;
 
     public function __construct(
         public readonly string $name
@@ -45,6 +46,10 @@ class Configuration
             $this->setAllowMsgSchedules($array['allow_msg_schedules']);
         }
 
+        if (isset($array['compression'])) {
+            $this->setCompression(Compression::from($array['compression']));
+        }
+
         return $this;
     }
 
@@ -56,6 +61,12 @@ class Configuration
     public function getDescription(): ?string
     {
         return $this->description;
+    }
+
+    public function setDescription(?string $description): self
+    {
+        $this->description = $description;
+        return $this;
     }
 
     public function getDenyDelete(): bool
@@ -204,6 +215,33 @@ class Configuration
         return $this;
     }
 
+    /**
+     * Set the compression algorithm used for this stream's storage.
+     *
+     * Pass {@see Compression::S2} to enable S2 (Snappy-based) compression,
+     * or {@see Compression::None} / null to disable it.
+     * Requires NATS Server >= 2.10.
+     *
+     * @param Compression|null $compression  null omits the field (server default: no compression)
+     *
+     * @see https://github.com/nats-io/nats-architecture-and-design/blob/main/adr/ADR-8.md
+     */
+    public function setCompression(?Compression $compression): self
+    {
+        $this->compression = $compression;
+        return $this;
+    }
+
+    /**
+     * Get the configured compression algorithm, or null if not explicitly set.
+     *
+     * @see https://github.com/nats-io/nats-architecture-and-design/blob/main/adr/ADR-8.md
+     */
+    public function getCompression(): ?Compression
+    {
+        return $this->compression;
+    }
+
     public function setConsumerLimits(array $consumerLimits): self
     {
         $this->consumerLimits = ConsumerLimits::validate($consumerLimits);
@@ -279,6 +317,7 @@ class Configuration
             'subjects' => $this->getSubjects(),
             'consumer_limits' => $this->getConsumerLimits(),
             'allow_msg_schedules' => $this->getAllowMsgSchedules(),
+            'compression' => $this->getCompression()?->value,
         ];
 
         foreach ($config as $k => $v) {
